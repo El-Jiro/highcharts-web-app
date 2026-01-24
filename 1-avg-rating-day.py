@@ -1,12 +1,23 @@
 import justpy as jp
 import pandas as pd
-import matplotlib.pyplot as plt
-from datetime import datetime
-from pytz import utc
 
 #Creamos un dataframe a partir del archivo csv, añadimos el argumento parse_dates y le asignamos una lista con la columna Timestamp para que los 
 #valores de dicha columna sean tratados como fechas en vez de strings  
 df = pd.read_csv("reviews.csv", parse_dates = ["Timestamp"])
+#print(df.head())
+
+"""
+Antes de graficar el promedio de las calificaciones por día, deberemos procesar los datos para convertirlos en información, primeramente 
+añadimos aldataframe una nueva columna llamada Day, la cual tendrá como valor únicamente la parte de fecha de la columna Timestamp.
+"""
+
+df["Day"] = df["Timestamp"].dt.date
+
+#Aplicamos el método groupby, el cual recibe como argumento el nombre de la columna entre corchetes, le concatenamos el método mean que 
+#debe recibir el argumento de palabra clave numeric_only con el valor True, de otra manera nos saltará un TypeError, y guardamos el 
+#resultado en day_avg
+day_avg = df.groupby(["Day"]).mean(numeric_only= True)
+print(day_avg.head())
 
 #Creamos un string con comillas triples que contendrá todo el código del gráfico:
 chart = """ {
@@ -27,7 +38,7 @@ chart = """ {
       text: 'Altitude'
     },
     labels: {
-      format: '{value} km'
+      format: '{value}'
     },
     accessibility: {
       rangeDescription: 'Range: 0 to 80 km.'
@@ -45,14 +56,14 @@ chart = """ {
     accessibility: {
       rangeDescription: 'Range: -90°C to 20°C.'
     },
-    lineWidth: 2
+    lineWidth: 1
   },
   legend: {
     enabled: false
   },
   tooltip: {
     headerFormat: '<b>{series.name}</b><br/>',
-    pointFormat: '{point.x} km: {point.y}°C'
+    pointFormat: '{point.x} : {point.y}'
   },
   plotOptions: {
     spline: {
@@ -84,13 +95,14 @@ def create_app() -> jp.QuasarPage:
     #Podemos cambiar el título accediendo al atributo .title.text mediante la sintaxis de punto y asignándole un nuevo valor
     hc.options.title.text = "Average Rating by Day"
 
-    #En un caso de uso real tendríamos un array de valores para el eje X y otro para el eje Y, de esta forma:
-    x = [3, 6, 8]
-    y= [4, 7, 9]
-    #Esto nos da una lista, con 0 accedemos al único item de la lista que es un diccionario, y posteriromente a la clave "data" de este
-    #diccionario. Ahora podremos modificar las coordenadas del gráfico, usamos zip para unir los elementos de x e y en pares. Deberemos
-    #convertir el objeto en una lista antes de asignarlo
-    hc.options.series[0].data = list(zip(x, y))
+    #HighCharts no reconocerá las fechas como valores válidos para el eje X si las pasamos directamente, por lo que las pasaremos mediante
+    #xAxis.categories no sin antes convertirlas en una lista
+    hc.options.xAxis.categories = list(day_avg.index)
+
+    #Esto nos da una lista, con 0 accedemos al único item de la lista que es un diccionario, y posteriormente a la clave "data" de este
+    #diccionario. Ahora podremos modificar las coordenadas del gráfico. Como ya definmos el eje X en la línea anterior, ahora pasaremos
+    #solamente el Y
+    hc.options.series[0].data = list(day_avg["Rating"])
 
     #print(type(hc.options))
     return wp
