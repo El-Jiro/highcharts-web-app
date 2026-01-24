@@ -4,7 +4,7 @@ import justpy as jp
 chart = """ {
   chart: {
     type: 'spline',
-    inverted: true
+    inverted: false
   },
   title: {
     text: 'Atmosphere Temperature by Altitude'
@@ -67,12 +67,24 @@ chart = """ {
 def create_app() -> jp.QuasarPage:
 
     wp = jp.QuasarPage() 
-    h3 = jp.QDiv(a=wp, text= "Análisis de las Calificaciones de los Cursos", classes="text-h3 text-center q-pa-md text-weight-medium")  
-    p1 = jp.QDiv(a=wp, text="Estos gráficos representan el análisis de las calificaciones de los cursos")
+    h3 = jp.QDiv(a=wp, text= "Analysis of Course Reviews", classes="text-h3 text-center q-pa-md text-weight-medium")  
+    p1 = jp.QDiv(a=wp, text="These graphs represent course review analysis", classes = "q-pl-sm")
 
     #Creaamos una instancia de jp.HighCharts, le pasamos en el constructor nuestra página base y el string que contiene las opciones del
     #gráfico
     hc = jp.HighCharts(a=wp, options = chart)
+    #Podemos cambiar el título accediendo al atributo .title.text mediante la sintaxis de punto y asignándole un nuevo valor
+    hc.options.title.text = "Average Rating by Day"
+
+    #En un caso de uso real tendríamos un array de valores para el eje X y otro para el eje Y, de esta forma:
+    x = [3, 6, 8]
+    y= [4, 7, 9]
+    #Esto nos da una lista, con 0 accedemos al único item de la lista que es un diccionario, y posteriromente a la clave "data" de este
+    #diccionario. Ahora podremos modificar las coordenadas del gráfico, usamos zip para unir los elementos de x e y en pares. Deberemos
+    #convertir el objeto en una lista antes de asignarlo
+    hc.options.series[0].data = list(zip(x, y))
+
+    #print(type(hc.options))
     return wp
 
 jp.justpy(create_app)
