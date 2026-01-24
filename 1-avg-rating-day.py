@@ -1,4 +1,12 @@
 import justpy as jp
+import pandas as pd
+import matplotlib.pyplot as plt
+from datetime import datetime
+from pytz import utc
+
+#Creamos un dataframe a partir del archivo csv, añadimos el argumento parse_dates y le asignamos una lista con la columna Timestamp para que los 
+#valores de dicha columna sean tratados como fechas en vez de strings  
+df = pd.read_csv("reviews.csv", parse_dates = ["Timestamp"])
 
 #Creamos un string con comillas triples que contendrá todo el código del gráfico:
 chart = """ {
