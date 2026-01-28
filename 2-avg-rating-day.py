@@ -3,7 +3,7 @@ import pandas as pd
 
 #Creamos un dataframe a partir del archivo csv, añadimos el argumento parse_dates y le asignamos una lista con la columna Timestamp para que los 
 #valores de dicha columna sean tratados como fechas en vez de strings  
-df = pd.read_csv("reviews.csv", parse_dates = ["Timestamp"])
+df = pd.read_csv("reviews.csv", parse_dates=["Timestamp"])
 #print(df.head())
 
 """
@@ -79,17 +79,15 @@ chart_def =  {
   }]
 }
 
-
-
 def create_app() -> jp.QuasarPage:
 
     wp = jp.QuasarPage() 
-    h3 = jp.QDiv(a=wp, text= "Análisis de las reseñas del curso", classes="text-h3 text-center q-pa-md text-weight-medium")  
+    h3 = jp.QDiv(a=wp, text="Análisis de las reseñas del curso", classes="text-h3 text-center q-pa-md text-weight-medium")  
     p1 = jp.QDiv(a=wp, text="Este gráfico representa un análisis de las reseñas del curso", classes = "q-pl-sm")
 
     #Creamos una instancia de jp.HighCharts, le pasamos en el constructor nuestra página base y el string que contiene la configuración 
     #del gráfico
-    hc = jp.HighCharts(a=wp, options = chart_def)
+    hc = jp.HighCharts(a=wp, options=chart_def)
     #Podemos cambiar el título accediendo al atributo .title.text mediante la sintaxis de punto y asignándole un nuevo valor
     hc.options.title.text = "Calificación promedio por semana"
 
