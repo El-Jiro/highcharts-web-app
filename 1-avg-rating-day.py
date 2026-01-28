@@ -28,14 +28,12 @@ chart = """ {
   title: {
     text: 'Atmosphere Temperature by Altitude'
   },
-  subtitle: {
-    text: 'According to the Standard Atmosphere Model'
-  },
+
   xAxis: {
     reversed: false,
     title: {
       enabled: true,
-      text: 'Altitude'
+      text: 'Date'
     },
     labels: {
       format: '{value}'
@@ -48,15 +46,15 @@ chart = """ {
   },
   yAxis: {
     title: {
-      text: 'Temperature'
+      text: 'Average Rating'
     },
     labels: {
-      format: '{value}°'
+      format: '{value}'
     },
     accessibility: {
       rangeDescription: 'Range: -90°C to 20°C.'
     },
-    lineWidth: 1
+    lineWidth: 0.5
   },
   legend: {
     enabled: false
@@ -73,7 +71,7 @@ chart = """ {
     }
   },
   series: [{
-    name: 'Temperature',
+    name: 'Average Rating',
     data: [
       [0, 15], [10, -50], [20, -56.5], [30, -46.5], [40, -22.1],
       [50, -2.5], [60, -27.7], [70, -55.7], [80, -76.5]
@@ -96,11 +94,11 @@ def create_app() -> jp.QuasarPage:
     hc.options.title.text = "Average Rating by Day"
 
     #HighCharts no reconocerá las fechas como valores válidos para el eje X si las pasamos directamente, por lo que las pasaremos mediante
-    #xAxis.categories no sin antes convertirlas en una lista
+    #xAxis.categories, no sin antes convertirlas en una lista
     hc.options.xAxis.categories = list(day_avg.index)
 
     #Esto nos da una lista, con 0 accedemos al único item de la lista que es un diccionario, y posteriormente a la clave "data" de este
-    #diccionario. Ahora podremos modificar las coordenadas del gráfico. Como ya definmos el eje X en la línea anterior, ahora pasaremos
+    #diccionario. Ahora podremos modificar las coordenadas del gráfico. Como ya definimos el eje X en la línea anterior, ahora pasaremos
     #solamente el Y
     hc.options.series[0].data = list(day_avg["Rating"])
 
