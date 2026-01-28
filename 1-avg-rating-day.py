@@ -33,7 +33,7 @@ chart = """ {
     reversed: false,
     title: {
       enabled: true,
-      text: 'Date'
+      text: 'Fecha'
     },
     labels: {
       format: '{value}'
@@ -46,7 +46,7 @@ chart = """ {
   },
   yAxis: {
     title: {
-      text: 'Average Rating'
+      text: 'Calificación Promedio'
     },
     labels: {
       format: '{value}'
@@ -71,7 +71,7 @@ chart = """ {
     }
   },
   series: [{
-    name: 'Average Rating',
+    name: 'Calificación Promedio',
     data: [
       [0, 15], [10, -50], [20, -56.5], [30, -46.5], [40, -22.1],
       [50, -2.5], [60, -27.7], [70, -55.7], [80, -76.5]
@@ -84,14 +84,14 @@ chart = """ {
 def create_app() -> jp.QuasarPage:
 
     wp = jp.QuasarPage() 
-    h3 = jp.QDiv(a=wp, text= "Analysis of Course Reviews", classes="text-h3 text-center q-pa-md text-weight-medium")  
-    p1 = jp.QDiv(a=wp, text="These graphs represent course review analysis", classes = "q-pl-sm")
+    h3 = jp.QDiv(a=wp, text= "Análisis de las reseñas del curso", classes="text-h3 text-center q-pa-md text-weight-medium")  
+    p1 = jp.QDiv(a=wp, text="Este gráfico representa un análisis de las reseñas del curso", classes = "q-pl-sm")
 
     #Creaamos una instancia de jp.HighCharts, le pasamos en el constructor nuestra página base y el string que contiene las opciones del
     #gráfico
     hc = jp.HighCharts(a=wp, options = chart)
     #Podemos cambiar el título accediendo al atributo .title.text mediante la sintaxis de punto y asignándole un nuevo valor
-    hc.options.title.text = "Average Rating by Day"
+    hc.options.title.text = "Calificación promedio por día"
 
     #HighCharts no reconocerá las fechas como valores válidos para el eje X si las pasamos directamente, por lo que las pasaremos mediante
     #xAxis.categories, no sin antes convertirlas en una lista
