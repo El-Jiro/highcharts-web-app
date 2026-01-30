@@ -6,18 +6,14 @@ import pandas as pd
 df = pd.read_csv("reviews.csv", parse_dates=["Timestamp"])
 #print(df.head())
 
-"""
-Antes de graficar el promedio de las calificaciones por semana, deberemos procesar los datos para convertirlos en información, para esto
-primeramente accedemos a la propiedad dt de la columna Timestamp e invocamos al método strftime, a este le pasamos el string especial '%Y-%U' 
-lo cual nos devolverá un string con el año y el número de la semana correspondiente separados por un guión. Este último es opcional, podemos 
-usar un espacio en blanco o cualquier otro caracter para separar los valores si así lo deseamos
-"""
+#Esta vez submuestrearemos todavía más los datos y obtendremos el conteo/promedio de calficaciones por mes
 
-df["Week"] = df["Timestamp"].dt.strftime('%Y-%U')
+#Extraemos el mes mediante strftime y lo guardamos en una nueva columna llamada month
+df["Month"] = df["Timestamp"].dt.strftime('%Y-%m')
 
-#Ahora agrupamos el dataframe resultante por la columna Week y calculamos el promedio de calificaciones
-week_avg = df.groupby(["Week"]).mean(numeric_only=True)
-print(week_avg.head())
+#Ahora agrupamos el dataframe resultante por la columna Month y calculamos el promedio de calificaciones
+month_avg = df.groupby(["Month"]).mean(numeric_only=True)
+print(month_avg.head())
 
 #Creamos un string con comillas triples que contendrá todo el código del gráfico:
 chart_def =  {
@@ -71,11 +67,7 @@ chart_def =  {
     }
   },
   "series": [{
-    "name": 'Calificación Promedio',
-    "data": [
-      [0, 15], [10, -50], [20, -56.5], [30, -46.5], [40, -22.1],
-      [50, -2.5], [60, -27.7], [70, -55.7], [80, -76.5]
-    ]
+    "name": 'Calificación Promedio'
   }]
 }
 
@@ -89,16 +81,16 @@ def create_app() -> jp.QuasarPage:
     #del gráfico
     hc = jp.HighCharts(a=wp, options=chart_def)
     #Podemos cambiar el título accediendo al atributo .title.text mediante la sintaxis de punto y asignándole un nuevo valor
-    hc.options.title.text = "Calificación promedio por semana"
+    hc.options.title.text = "Calificación promedio por mes"
 
     #HighCharts no reconocerá las fechas como valores válidos para el eje X si las pasamos directamente, por lo que las pasaremos mediante
     #xAxis.categories, no sin antes convertirlas en una lista
-    hc.options.xAxis.categories = list(week_avg.index)
+    hc.options.xAxis.categories = list(month_avg.index)
 
     #Esto nos da una lista, con 0 accedemos al único item de la lista que es un diccionario, y posteriormente a la clave "data" de este
     #diccionario. Ahora podremos modificar las coordenadas del gráfico. Como ya definimos el eje X en la línea anterior, ahora pasaremos
     #solamente el Y
-    hc.options.series[0].data = list(week_avg["Rating"])
+    hc.options.series[0].data = list(month_avg["Rating"])
 
     #print(type(hc.options))
     return wp
