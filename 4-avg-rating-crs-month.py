@@ -8,9 +8,11 @@ df = pd.read_csv("reviews.csv", parse_dates=["Timestamp"])
 #Extraemos el mes mediante strftime y lo guardamos en una nueva columna llamada month
 df["Month"] = df["Timestamp"].dt.strftime('%Y-%m')
 
-#Ahora agrupamos el dataframe resultante por la columna Month y calculamos el promedio de calificaciones
-month_avg = df.groupby(["Month"]).mean(numeric_only=True)
-print(month_avg.head())
+#Agrupamos por curso y mes, calculamos el promedio y guardamos todo en la variable month_avg_crs. La estructura del dataframe resultante 
+#es algo confusa, básicamente tenemos un grupo de filas en cada mes, por lo que aplicaremos el método unstack  para hacerlo más claro y 
+#legible, ahora cada columna es un curso y cada fila un mes.
+month_avg_crs = df.groupby(["Month", "Course Name"]).mean(numeric_only=True).unstack()
+print(month_avg_crs.head())
 
 #Creamos un diccionario que contendrá todo el código del gráfico:
 chart_def = {
@@ -19,11 +21,7 @@ chart_def = {
     },
 
     "title": {
-        "text": "Moose and deer hunting in Norway, 2000 - 2024"
-    },
-
-    "subtitle": {
-        "text": 'Source: <a href="https://www.ssb.no/jord-skog-jakt-og-fiskeri/jakt" target="_blank">SSB</a>'
+        "text": "Promedio de calificaciones por curso y mes"
     },
 
     "legend": {
@@ -38,6 +36,9 @@ chart_def = {
     },
 
     "xAxis": {
+        "title": {
+            "text": "Fecha"
+        },
         "plotBands": [
             {
                 "from": 2020,
@@ -49,7 +50,7 @@ chart_def = {
 
     "yAxis": {
         "title": {
-            "text": "Quantity"
+            "text": "Calificación"
         }
     },
 
