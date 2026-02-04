@@ -7,13 +7,15 @@ df = pd.read_csv("reviews.csv", parse_dates=["Timestamp"])
 
 #Extraemos el mes mediante strftime y lo guardamos en una nueva columna llamada month
 df["Month"] = df["Timestamp"].dt.strftime('%Y-%m')
+#print(df["Month"])
 
 #Agrupamos por curso y mes, calculamos el promedio y guardamos todo en la variable month_avg_crs. La estructura del dataframe resultante 
 #es algo confusa, básicamente tenemos un grupo de filas en cada mes, por lo que aplicaremos el método unstack  para hacerlo más claro y 
 #legible, ahora cada columna es un curso y cada fila un mes.
 month_avg_crs = df.groupby(["Month", "Course Name"]).mean(numeric_only=True).unstack()
-print(month_avg_crs.head())
+#print(month_avg_crs.head())
 
+print(month_avg_crs.index)
 #Creamos un diccionario que contendrá todo el código del gráfico:
 chart_def = {
     "chart": {
@@ -64,9 +66,6 @@ chart_def = {
     },
 
     "plotOptions": {
-        "series": {
-            "pointStart": 2000
-        },
         "areaspline": {
             "fillOpacity": 0.5
         }
@@ -105,6 +104,15 @@ def create_app() -> jp.QuasarPage:
     #del gráfico
     hc = jp.HighCharts(a=wp, options=chart_def)
 
+    #Colocamos la información de nuestro index en el eje X
+    hc.options.xAxis.categories = list(month_avg_crs.index)
+
+    hc.options.xAxis.labels = {
+    "rotation": -60
+    }
+    
+    hc.options.xAxis.min = 0
+    hc.options.xAxis.max = 39
     #print(type(hc.options))
     return wp
 
