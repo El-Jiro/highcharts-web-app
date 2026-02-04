@@ -12,61 +12,87 @@ df["Month"] = df["Timestamp"].dt.strftime('%Y-%m')
 month_avg = df.groupby(["Month"]).mean(numeric_only=True)
 print(month_avg.head())
 
-#Creamos un string con comillas triples que contendrá todo el código del gráfico:
-chart_def =  {
-  "chart": {
-    "type": "spline",
-    "inverted": False
-  },
-  "title": {
-    "text": 'Atmosphere Temperature by Altitude'
-  },
+#Creamos un diccionario que contendrá todo el código del gráfico:
+chart_def = {
+    "chart": {
+        "type": "spline"
+    },
 
-  "xAxis": {
-    "reversed": False,
     "title": {
-      "enabled": True,
-      "text": 'Fecha'
+        "text": "Moose and deer hunting in Norway, 2000 - 2024"
     },
-    "labels": {
-      "format": '{value}'
+
+    "subtitle": {
+        "text": 'Source: <a href="https://www.ssb.no/jord-skog-jakt-og-fiskeri/jakt" target="_blank">SSB</a>'
     },
-    "accessibility": {
-      "rangeDescription": 'Range: 0 to 80 km.'
+
+    "legend": {
+        "layout": "vertical",
+        "align": "left",
+        "verticalAlign": "top",
+        "x": 120,
+        "y": 70,
+        "floating": True,
+        "borderWidth": 1,
+        "backgroundColor": "var(--highcharts-background-color, #ffffff)"
     },
-    "maxPadding": 0.05,
-    "showLastLabel": True
-  },
-  "yAxis": {
-    "title": {
-      "text": 'Calificación Promedio'
+
+    "xAxis": {
+        "plotBands": [
+            {
+                "from": 2020,
+                "to": 2023,
+                "color": "rgba(68, 170, 213, .2)"
+            }
+        ]
     },
-    "labels": {
-      "format": '{value}'
+
+    "yAxis": {
+        "title": {
+            "text": "Quantity"
+        }
     },
-    "accessibility": {
-      "rangeDescription": 'Range: -90°C to 20°C.'
+
+    "tooltip": {
+        "shared": True,
+        "headerFormat": "<b>Hunting season starting autumn {point.x}</b><br>"
     },
-    "lineWidth": 1
-  },
-  "legend": {
-    "enabled": False
-  },
-  "tooltip": {
-    "headerFormat": '<b>{series.name}</b><br/>',
-    "pointFormat": '{point.x} : {point.y}'
-  },
-  "plotOptions": {
-    "spline": {
-      "marker": {
-        "enable": False
-      }
-    }
-  },
-  "series": [{
-    "name": 'Calificación Promedio'
-  }]
+
+    "credits": {
+        "enabled": False
+    },
+
+    "plotOptions": {
+        "series": {
+            "pointStart": 2000
+        },
+        "areaspline": {
+            "fillOpacity": 0.5
+        }
+    },
+
+    "series": [
+        {
+            "name": "Moose",
+            "data": [
+                38000, 37300, 37892, 38564, 36770, 36026,
+                34978, 35657, 35620, 35971, 36409, 36435,
+                34643, 34956, 33199, 31136, 30835, 31611,
+                30666, 30319, 31766, 29278, 27487, 26007
+            ]
+        },
+        {
+            "name": "Deer",
+            "data": [
+                22534, 23599, 24533, 25195, 25896, 27635,
+                29173, 32646, 35686, 37709, 39143, 36829,
+                35031, 36202, 35140, 33718, 37773, 42556,
+                43820, 46445, 50048, 52804, 49317, 52490
+            ]
+        }
+    ]
 }
+
 
 def create_app() -> jp.QuasarPage:
 
@@ -77,17 +103,6 @@ def create_app() -> jp.QuasarPage:
     #Creamos una instancia de jp.HighCharts, le pasamos en el constructor nuestra página base y el string que contiene la configuración 
     #del gráfico
     hc = jp.HighCharts(a=wp, options=chart_def)
-    #Podemos cambiar el título accediendo al atributo .title.text mediante la sintaxis de punto y asignándole un nuevo valor
-    hc.options.title.text = "Calificación promedio por mes"
-
-    #HighCharts no reconocerá las fechas como valores válidos para el eje X si las pasamos directamente, por lo que las pasaremos mediante
-    #xAxis.categories, no sin antes convertirlas en una lista
-    hc.options.xAxis.categories = list(month_avg.index)
-
-    #Esto nos da una lista, con 0 accedemos al único item de la lista que es un diccionario, y posteriormente a la clave "data" de este
-    #diccionario. Ahora podremos modificar las coordenadas del gráfico. Como ya definimos el eje X en la línea anterior, ahora pasaremos
-    #solamente el Y
-    hc.options.series[0].data = list(month_avg["Rating"])
 
     #print(type(hc.options))
     return wp
