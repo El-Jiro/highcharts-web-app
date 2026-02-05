@@ -27,11 +27,9 @@ chart_def = {
     },
 
     "legend": {
-        "layout": "vertical",
+        "layout": "horizontal",
         "align": "left",
-        "verticalAlign": "top",
-        "x": 120,
-        "y": 70,
+        "verticalAlign": "bottom",
         "floating": False,
         "borderWidth": 1,
         "backgroundColor": "var(--highcharts-background-color, #ffffff)"
@@ -58,6 +56,7 @@ chart_def = {
 
     "tooltip": {
         "shared": True,
+        "valueDecimals": 1,
         "headerFormat": "<b>Calificaciones en la fecha de {point.x}</b><br>"
     },
 
