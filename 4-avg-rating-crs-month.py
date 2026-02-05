@@ -15,7 +15,7 @@ df["Month"] = df["Timestamp"].dt.strftime('%Y-%m')
 month_avg_crs = df.groupby(["Month", "Course Name"]).mean(numeric_only=True).unstack()
 #print(month_avg_crs.head())
 
-print(month_avg_crs.index)
+#print(month_avg_crs.index)
 #Creamos un diccionario que contendrá todo el código del gráfico:
 chart_def = {
     "chart": {
@@ -32,7 +32,7 @@ chart_def = {
         "verticalAlign": "top",
         "x": 120,
         "y": 70,
-        "floating": True,
+        "floating": False,
         "borderWidth": 1,
         "backgroundColor": "var(--highcharts-background-color, #ffffff)"
     },
@@ -58,7 +58,7 @@ chart_def = {
 
     "tooltip": {
         "shared": True,
-        "headerFormat": "<b>Hunting season starting autumn {point.x}</b><br>"
+        "headerFormat": "<b>Calificaciones en la fecha de {point.x}</b><br>"
     },
 
     "credits": {
@@ -106,14 +106,26 @@ def create_app() -> jp.QuasarPage:
 
     #Colocamos la información de nuestro index en el eje X
     hc.options.xAxis.categories = list(month_avg_crs.index)
-
+    
+    #Rotamos los labels para que no se amontonen
     hc.options.xAxis.labels = {
     "rotation": -60
     }
     
+    #Forzamos a mostrar todas las etiquetas
     hc.options.xAxis.min = 0
     hc.options.xAxis.max = 39
-    #print(type(hc.options))
+
+    #Creamos una lista para almacenar los valores de los distintos cursos, y usamos la comprensión de listas para reemplazar v1
+    #por el nombre de cada columna iterando sobre la lista de columnas. Para obtener los datos de cada columna usamos una comprensión 
+    #anidada, iterando sobre las filas de dicha columna
+    hc_data = [{"name": v1[1], "data": [v2 for v2 in month_avg_crs[v1]]} for v1 in month_avg_crs.columns]
+
+    print(hc_data)
+    
+    #Asignamos la lista al atributo series de hc
+    hc.options.series = hc_data
+
     return wp
 
 jp.justpy(create_app)
