@@ -19,78 +19,102 @@ month_avg_crs = df.groupby(["Month", "Course Name"]).mean(numeric_only=True).uns
 #Creamos un diccionario que contendrá todo el código del gráfico:
 
 chart_def = {
+
     "chart": {
-        "type": "spline"
+        "type": "streamgraph",
+        "zooming": {
+            "type": "x"
+        }
+    },
+
+     "tooltip": {
+        "shared": True,
+        "valueDecimals": 1,
     },
 
     "title": {
+        "floating": True,
+        "align": "center",
         "text": "Promedio de calificaciones por curso y mes"
     },
 
-    "legend": {
-        "layout": "horizontal",
-        "align": "left",
-        "verticalAlign": "bottom",
-        "floating": False,
-        "borderWidth": 1,
-        "backgroundColor": "var(--highcharts-background-color, #ffffff)"
-    },
-
     "xAxis": {
+
+        "maxPadding": 0,
+        "type": "category",
+        "crosshair": True,
+        "categories": [
+        ],
+
         "title": {
             "text": "Fecha"
         },
-        "plotBands": [
-            {
-                "from": 2020,
-                "to": 2023,
-                "color": "rgba(68, 170, 213, .2)"
-            }
-        ]
+        "labels": {
+            "align": "left",
+            "reserveSpace": True,
+        },
+        "lineWidth": 0,
+        "tickWidth": 0
     },
 
     "yAxis": {
-        "title": {
-            "text": "Calificación"
-        }
+        "visible": False,
+        "startOnTick": False,
+        "endOnTick": False,
+        "minPadding": 0.1,
+        "maxPadding": 0.15
     },
 
-    "tooltip": {
-        "shared": True,
-        "valueDecimals": 1,
-        "headerFormat": "<b>Calificaciones en la fecha de {point.x}</b><br>"
-    },
-
-    "credits": {
+    "legend": {
         "enabled": False
     },
 
+    "annotations": [{
+        "labels": [
+            {
+                "point": {"x": 5.5, "xAxis": 0, "y": 30, "yAxis": 0},
+                "text": "Cancelled<br>during<br>World War II"
+            },
+            {
+                "point": {"x": 18, "xAxis": 0, "y": 90, "yAxis": 0},
+                "text": "Soviet Union fell,<br>Germany united"
+            },
+            {
+                "point": {"x": 24.25, "xAxis": 0, "y": 140, "yAxis": 0},
+                "text": "Russia banned from<br>the Olympic Games<br> in 2017"
+            }
+        ],
+        "labelOptions": {
+            "backgroundColor": "rgba(255,255,255,0.5)",
+            "borderColor": "silver"
+        }
+    }],
+
     "plotOptions": {
-        "areaspline": {
-            "fillOpacity": 0.5
+        "series": {
+            "label": {
+                "enable": True,
+                "minFontSize": 5,
+                "maxFontSize": 15,
+                "allowOverlap": False,
+                "style": {
+                    "color": "rgba(255,255,255,0.75)",
+                    "fontweight": "bold",
+                    "textOutline": None
+                }
+            },
+            "accessibility": {
+                "exposeAsGroupOnly": True
+            }
         }
     },
 
-    "series": [
-        {
-            "name": "Moose",
-            "data": [
-                38000, 37300, 37892, 38564, 36770, 36026,
-                34978, 35657, 35620, 35971, 36409, 36435,
-                34643, 34956, 33199, 31136, 30835, 31611,
-                30666, 30319, 31766, 29278, 27487, 26007
-            ]
-        },
-        {
-            "name": "Deer",
-            "data": [
-                22534, 23599, 24533, 25195, 25896, 27635,
-                29173, 32646, 35686, 37709, 39143, 36829,
-                35031, 36202, 35140, 33718, 37773, 42556,
-                43820, 46445, 50048, 52804, 49317, 52490
-            ]
-        }
-    ]
+    "series": [],
+
+    "exporting": {
+        "sourceWidth": 800,
+        "sourceHeight": 600
+    }
 }
 
 
