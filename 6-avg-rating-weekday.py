@@ -6,19 +6,24 @@ import pandas as pd
 df = pd.read_csv("reviews.csv", parse_dates=["Timestamp"])
 #print(df.head())
 
+#Extraemos el nombre del día de cada fecha mediante strftime y lo guardamos en una nueva columna llamada Weekday
+df["Weekday"] = df["Timestamp"].dt.strftime("%A")
+
+#Para obtener el número de día en vez del nombre, utilizamos %w
+df["Day number"] = df["Timestamp"].dt.strftime("%w")
+
+#Agrupamos tanto por Weekday como Day number y calculamos el promedio para cada día
+wd_avg = df.groupby(["Weekday", "Day number"]).mean(numeric_only=True)
+
+#Con esto ya podemos ordenar el dataframe resultante por los valores de Day number de menor a mayor en vez del orden alfabético
+wd_avg = wd_avg.sort_values(["Day number"])
+
 """
-Antes de graficar el promedio de las calificaciones por semana, deberemos procesar los datos para convertirlos en información, para esto
-primeramente accedemos a la propiedad dt de la columna Timestamp e invocamos al método strftime, a este le pasamos el string especial '%Y-%U' 
-lo cual nos devolverá un string con el año y el número de la semana correspondiente separados por un guión. Este último es opcional, podemos 
-usar un espacio en blanco o cualquier otro caracter para separar los valores si así lo deseamos
+Ahora mismo nuestro index tiene dos valores, es decir es una lista de tuplas, por lo que si intentamos graficarla obtendremos un error, para extraer
+sólo los nombres de los días invocamos al método get_level_values de la propiedad index, el cual puede recibir como argumentos 0, que nos devuelve el
+primer valor de cada tupla, o 1 que devuelve el segundo, en este caso le pasaremos un 0. 
 """
-
-df["Week"] = df["Timestamp"].dt.strftime('%Y-%U')
-
-#Ahora agrupamos el dataframe resultante por la columna Week y calculamos el promedio de calificaciones
-week_avg = df.groupby(["Week"]).mean(numeric_only=True)
-print(week_avg.head())
-
+week_days = wd_avg.index.get_level_values(0)
 #Creamos un string con comillas triples que contendrá todo el código del gráfico:
 chart_def =  {
   "chart": {
@@ -93,12 +98,12 @@ def create_app() -> jp.QuasarPage:
 
     #HighCharts no reconocerá las fechas como valores válidos para el eje X si las pasamos directamente, por lo que las pasaremos mediante
     #xAxis.categories, no sin antes convertirlas en una lista
-    hc.options.xAxis.categories = list(week_avg.index)
+    hc.options.xAxis.categories = list(week_days)
 
     #Esto nos da una lista, con 0 accedemos al único item de la lista que es un diccionario, y posteriormente a la clave "data" de este
     #diccionario. Ahora podremos modificar las coordenadas del gráfico. Como ya definimos el eje X en la línea anterior, ahora pasaremos
     #solamente el Y
-    hc.options.series[0].data = list(week_avg["Rating"])
+    hc.options.series[0].data = list(wd_avg["Rating"])
 
     #print(type(hc.options))
     return wp
