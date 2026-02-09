@@ -9,90 +9,43 @@ imágenes, etc, y, por último, retornamos el objeto QuasarPage. Esta función n
 
 #Creamos un diccionario con la definición del gráfico
 chart_def = {
-
     "chart": {
-        "type": "pie",
-        "zooming": {
-            "type": "xy"
-        },
-        "panning": {
-            "enabled": True,
-            "type": "xy"
-        },
-        "panKey": "shift"
+        "type": "pie"
     },
-
     "title": {
         "text": "Egg Yolk Composition"
     },
-
     "tooltip": {
-        "valueSuffix": "%"
+        "pointFormat": "<b>{point.percentage:.1f}%</b>"
     },
-
-    "subtitle": {
-        "text": (
-            'Source:<a href="https://www.mdpi.com/2072-6643/11/3/684/htm" '
-            'target="_default">MDPI</a>'
-        )
-    },
-
     "plotOptions": {
         "pie": {
             "allowPointSelect": True,
-            "cursor": "pointer",
-            "dataLabels": [
-                {
-
-                    "enabled": True,
-                    "distance": -40,
-                    "format": "{point.percentage:.1f}%",
-                    "style": {
-                        "fontSize": "1.2em",
-                        "textOutline": "none",
-                        "opacity": 0.7
-                    },
-                    "filter": {
-                        "operator": ">",
-                        "property": "percentage",
-                        "value": 10
-                    },
-                }
-            ]
+            "cursor": "pointer"
         }
     },
-
-    "series": [
-        {
-            "name": "Percentage",
-            "colorByPoint": True,
-            "data": [
-                {
-                    "name": "Water",
-                    "y": 55.02
-                },
-                {
-                    "name": "Fat",
-                    "sliced": True,
-                    "selected": True,
-                    "y": 26.71
-                },
-                {
-                    "name": "Carbohydrates",
-                    "y": 1.09
-                },
-                {
-                    "name": "Protein",
-                    "y": 15.5
-                },
-                {
-                    "name": "Ash",
-                    "y": 1.68
-                }
-            ]
-        }
-    ]
+    "series": [{
+        "type": "pie",
+        "name": "Percentage",
+        "colorByPoint": True,
+        "dataLabels": {
+            "enabled": True,
+            "distance": 30,
+            "format": "<b>{point.name}</b>: {point.percentage:.1f}%",
+            "connectorWidth": 1
+        },
+        "data": [
+            {"name": "Water", "y": 55.02},
+            {"name": "Fat", "y": 26.71, "sliced": True, "selected": True},
+            {"name": "Carbohydrates", "y": 1.09},
+            {"name": "Protein", "y": 15.5},
+            {"name": "Ash", "y": 1.68}
+        ]
+        
+    }]
 }
+
+
 
 #Creamos un dataframe a partir del archivo csv, añadimos el argumento parse_dates y le asignamos una lista con la columna Timestamp para que los 
 #valores de dicha columna sean tratados como fechas en vez de strings  
@@ -112,7 +65,7 @@ def create_app() -> jp.QuasarPage:
     h3 = jp.QDiv(a=wp, text= "Análisis de las Calificaciones de los Cursos", classes="text-h3 text-center q-pa-md text-weight-medium")  
     p1 = jp.QDiv(a=wp, text="Estos gráficos representan el análisis de las calificaciones de los cursos")
 
-       #Creamos una instancia de jp.HighCharts, le pasamos en el constructor nuestra página base y el string que contiene la configuración 
+    #Creamos una instancia de jp.HighCharts, le pasamos en el constructor nuestra página base y el string que contiene la configuración 
     #del gráfico
     hc = jp.HighCharts(a=wp, options=chart_def)
 
