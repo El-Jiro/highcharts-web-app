@@ -1,4 +1,5 @@
 import justpy as jp
+import pandas as pd
 
 """
 Para crear una web app con justpy, primeramente deberemos definir una función que cree una instancia de jp.QuasarPage, este objeto 
@@ -42,10 +43,7 @@ chart_def = {
             "cursor": "pointer",
             "dataLabels": [
                 {
-                    "enabled": True,
-                    "distance": 20
-                },
-                {
+
                     "enabled": True,
                     "distance": -40,
                     "format": "{point.percentage:.1f}%",
@@ -58,7 +56,7 @@ chart_def = {
                         "operator": ">",
                         "property": "percentage",
                         "value": 10
-                    }
+                    },
                 }
             ]
         }
@@ -96,6 +94,13 @@ chart_def = {
     ]
 }
 
+#Creamos un dataframe a partir del archivo csv, añadimos el argumento parse_dates y le asignamos una lista con la columna Timestamp para que los 
+#valores de dicha columna sean tratados como fechas en vez de strings  
+df = pd.read_csv("reviews.csv", parse_dates = ["Timestamp"])
+
+#Creamos una nueva serie agrupando por el nombre del curso, filtrando por rating y aplicamos el método count
+share = df.groupby(["Course Name"])["Rating"].count()
+print(share)
 
 def create_app() -> jp.QuasarPage:
 
