@@ -13,7 +13,7 @@ chart_def = {
         "type": "pie"
     },
     "title": {
-        "text": "Egg Yolk Composition"
+        "text": "Porcentaje de reseñas por curso"
     },
     "tooltip": {
         "pointFormat": "<b>{point.percentage:.1f}%</b>"
@@ -53,7 +53,7 @@ df = pd.read_csv("reviews.csv", parse_dates = ["Timestamp"])
 
 #Creamos una nueva serie agrupando por el nombre del curso, filtrando por rating y aplicamos el método count
 share = df.groupby(["Course Name"])["Rating"].count()
-print(share)
+#print(share)
 
 def create_app() -> jp.QuasarPage:
 
@@ -68,6 +68,14 @@ def create_app() -> jp.QuasarPage:
     #Creamos una instancia de jp.HighCharts, le pasamos en el constructor nuestra página base y el string que contiene la configuración 
     #del gráfico
     hc = jp.HighCharts(a=wp, options=chart_def)
+
+    #Utilizamos la comprensión de listas junto con zip para recorrer el index y los datos de la serie al mismo tiempo creando 
+    #una lista de diccionarios con dos pares clave-valor cada uno
+    hc_data = [{"name": v1, "y": v2} for v1, v2 in zip(share.index, share)]
+    print(hc_data)
+
+    #Ahora asignamos hc_data al atributo data de hc
+    hc.options.series[0].data = hc_data
 
     #Definimos wp como valor de retorno de la función
     return wp
