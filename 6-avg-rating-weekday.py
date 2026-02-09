@@ -38,7 +38,7 @@ chart_def =  {
     "reversed": False,
     "title": {
       "enabled": True,
-      "text": 'Fecha'
+      "text": 'Día'
     },
     "labels": {
       "format": '{value}'
@@ -65,6 +65,7 @@ chart_def =  {
     "enabled": False
   },
   "tooltip": {
+    "valueDecimals": 1,
     "headerFormat": '<b>{series.name}</b><br/>',
     "pointFormat": '{point.x} : {point.y}'
   },
@@ -94,11 +95,12 @@ def create_app() -> jp.QuasarPage:
     #del gráfico
     hc = jp.HighCharts(a=wp, options=chart_def)
     #Podemos cambiar el título accediendo al atributo .title.text mediante la sintaxis de punto y asignándole un nuevo valor
-    hc.options.title.text = "Calificación promedio por semana"
+    hc.options.title.text = "Calificación promedio por día de la semana"
+
 
     #HighCharts no reconocerá las fechas como valores válidos para el eje X si las pasamos directamente, por lo que las pasaremos mediante
     #xAxis.categories, no sin antes convertirlas en una lista
-    hc.options.xAxis.categories = list(week_days)
+    hc.options.xAxis.categories = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
 
     #Esto nos da una lista, con 0 accedemos al único item de la lista que es un diccionario, y posteriormente a la clave "data" de este
     #diccionario. Ahora podremos modificar las coordenadas del gráfico. Como ya definimos el eje X en la línea anterior, ahora pasaremos
